@@ -42,7 +42,6 @@ class MENDQADataset:
                         "target_new": {"str": record["answers"][0]},
                         "target_true": {"str": "<|endoftext|>"},
                     },
-                    "paraphrase_prompts": [record["rephrase"]],
                     "neighborhood_prompts": [
                         {
                             "prompt": record["loc"] + "?" + tok.decode(ans_toks[:i]),
@@ -50,6 +49,7 @@ class MENDQADataset:
                         }
                         for i in range(len(ans_toks))
                     ],
+                    "paraphrase_prompts": [],
                     "attribute_prompts": [],
                     "generation_prompts": [],
                 }

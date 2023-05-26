@@ -115,6 +115,8 @@ def layer_stats(
         size_suffix = "_t{batch_tokens}" + size_suffix
     if model_name is None:
         model_name = model.config._name_or_path.replace("/", "_")
+        if 'j-6b' in model_name:
+            model_name = model_name.replace('j-6b', 'j-6B')
 
     stats_dir = Path(stats_dir)
     file_extension = f"{model_name}/{ds_name}_stats/{layer_name}_{precision}_{'-'.join(sorted(to_collect))}{size_suffix}.npz"

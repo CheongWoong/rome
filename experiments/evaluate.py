@@ -16,10 +16,12 @@ from dsets import (
     AttributeSnippets,
     CounterFactDataset,
     MENDQADataset,
+    LAMA_TREx_Dataset,
     get_tfidf_vectorizer,
 )
 from experiments.py.eval_utils_counterfact import compute_rewrite_quality_counterfact
 from experiments.py.eval_utils_zsre import compute_rewrite_quality_zsre
+from experiments.py.eval_utils_LAMA_TREx import compute_rewrite_quality_LAMA_TREx
 from rome import ROMEHyperParams, apply_rome_to_model
 from util import nethook
 from util.globals import *
@@ -35,6 +37,7 @@ ALG_DICT = {
 DS_DICT = {
     "cf": (CounterFactDataset, compute_rewrite_quality_counterfact),
     "zsre": (MENDQADataset, compute_rewrite_quality_zsre),
+    "LAMA_TREx": (LAMA_TREx_Dataset, compute_rewrite_quality_LAMA_TREx)
 }
 
 
@@ -87,8 +90,12 @@ def main(
     # Instantiate vanilla model
     print("Instantiating model")
     if type(model_name) is str:
-        model = AutoModelForCausalLM.from_pretrained(model_name).cuda()
-        tok = AutoTokenizer.from_pretrained(model_name)
+        if 'j-6B' in model_name:
+            model = AutoModelForCausalLM.from_pretrained(model_name.replace('j-6B', 'j-6b')).cuda()
+            tok = AutoTokenizer.from_pretrained(model_name.replace('j-6B', 'j-6b'))
+        else:
+            model = AutoModelForCausalLM.from_pretrained(model_name).cuda()
+            tok = AutoTokenizer.from_pretrained(model_name)
         tok.pad_token = tok.eos_token
     else:
         model, tok = model_name
@@ -175,7 +182,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--ds_name",
-        choices=["cf", "zsre"],
+        choices=["cf", "zsre", "LAMA_TREx"],
         default="cf",
         help="Dataset to perform evaluations on. Either CounterFact (cf) or zsRE (zsre).",
     )

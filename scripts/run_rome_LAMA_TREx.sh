@@ -1,0 +1,1 @@
+nohup python -m experiments.evaluate --alg_name=ROME --model_name=EleutherAI/gpt-j-6B --hparams_fname=EleutherAI_gpt-j-6B.json --ds_name=LAMA_TREx &
